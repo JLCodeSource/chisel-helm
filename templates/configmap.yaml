@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-chisel-configmap
+  labels:
+  {{- template "chisel-helm.labels" }}
+data:
+  {{- range $key, $val := .Values.chisel }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
