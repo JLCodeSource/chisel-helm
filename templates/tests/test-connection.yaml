@@ -8,8 +8,18 @@ metadata:
     "helm.sh/hook": test-success
 spec:
   containers:
-    - name: wget
-      image: busybox
-      command: ['wget']
-      args:  ['{{ include "chisel-helm.fullname" . }}:{{ .Values.service.port }}']
+    - name: chisel-test
+      image: jpillora/chisel
+      env:
+      - name: PORT
+        valueFrom:
+          configMapKeyRef:
+            name: {{ .Release.Name }}-chisel-configmap
+            key: port
+      - name: SERVICENAME
+        valueFrom:
+          configMapKeyRef:
+            name: {{ .Release.Name }}-chisel-configmap
+            key: servicename
+      command: ["/app/chisel", "client", "-v", "http://$(SERVICENAME):$(PORT)", "socks"]
   restartPolicy: Never

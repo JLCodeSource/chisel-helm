@@ -32,6 +32,13 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Create service name and port for env values
+*/}}
+{{- define "chisel-helm.servicename" -}}
+{{- printf "%s-%s" .Values.service.name  .Chart.Name -}}
+{{- end -}}
+
+{{/*
 Common labels
 */}}
 {{- define "chisel-helm.labels" -}}
