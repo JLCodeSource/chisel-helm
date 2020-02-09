@@ -2,27 +2,45 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# chisel is the main config
 chisel:
+# chisel type can be server or client (should always(?) be server here)
   type: "server"
+# port is the internal listening port - must match the service port
   port: 34443
+# proxy is the hidden target for when a non-chisel request is received
   proxy: "https://remote01.tf.com"
+# socks is necessary to decide if there is a need for a socks5 server
   socks: "--socks5"
+# path is the path for the waiting tunnel
   path: "/tunnel"
 
+# replicaCount is the number of necessary replicas
 replicaCount: 3
 
+# image sets out the default image
 image:
+# default repo
   repository: jpillora/chisel
+# default version
   tag: 1.3
+# default pullpolicy
   pullPolicy: IfNotPresent
 
+# service sets out the service values
 service:
+# type is typically ClusterIP
   type: ClusterIP
+# externalPort is the listening svc port
   externalPort: 8080
+# internalPort is the listening internal pod port - must match chisel.port
   internalPort: 34443
+# protocol must be TCP
   protocol: TCP
+# service name should be chisel
   name: chisel
 
+# ingress settings currently disabled
 ingress:
   enabled: false
   annotations: {}
@@ -38,6 +56,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+# not used currently
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -50,8 +69,11 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+# not used currently
 nodeSelector: {}
 
+# not used currently
 tolerations: []
 
+# not used currently
 affinity: {}
