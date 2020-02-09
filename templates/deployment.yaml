@@ -16,28 +16,45 @@ spec:
         app.kubernetes.io/name: {{ include "chisel-helm.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-    {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}  
           ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
+          - containerPort: {{ .Values.service.internalPort }}
+            protocol: {{ .Values.service.protocol }}
+          env:
+          - name: TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-chisel-configmap
+                key: chisel.type
+          - name: PORT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-chisel-configmap
+                key: chisel.port
+          - name: PROXY
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-chisel-configmap
+                key: chisel.proxy
+          - name: SOCKS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-chisel-configmap
+                key: chisel.socks
+          command: ["/app/chisel", "$(TYPE)", "-v", "-p", "$(PORT)", "--proxy", "$(PROXY)", "$(SOCKS)"]
           livenessProbe:
             httpGet:
               path: /
-              port: http
+              port: {{ .Values.service.externalPort }}
           readinessProbe:
             httpGet:
               path: /
-              port: http
+              port: {{ .Values.service.externalPort }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

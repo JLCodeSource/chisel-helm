@@ -5,6 +5,10 @@ metadata:
   labels:
 {{ include "chisel-helm.labels" . | indent 4 }}
 data:
-  {{- range $key, $val := .Values.chisel }}
-  {{ $key }}: {{ $val | quote }}
+  {{- with .Values.chisel }}
+  type: {{ .type }}
+  port: {{ .port }}
+  proxy: {{ .proxy }}
+  socks: {{ .socks }}
+  path: {{ .path }}
   {{- end }}

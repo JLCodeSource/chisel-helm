@@ -4,25 +4,24 @@
 
 chisel:
   type: "server"
-  port: 8443
+  port: 34443
   proxy: "https://remote01.tf.com"
-  socks: "socks5"
+  socks: "--socks5"
+  path: "/tunnel"
 
 replicaCount: 3
 
 image:
-  repository: nginx
-  tag: stable
+  repository: jpillora/chisel
+  tag: 1.3
   pullPolicy: IfNotPresent
-
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
 
 service:
   type: ClusterIP
-  port: 80
-  targetPort: 8443
+  externalPort: 8080
+  internalPort: 34443
+  protocol: TCP
+  name: chisel
 
 ingress:
   enabled: false
