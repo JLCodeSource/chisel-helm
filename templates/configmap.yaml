@@ -8,8 +8,3 @@ data:
   {{- range $key, $val := .Values.chisel }}
   {{ $key }}: {{ $val | quote }}
   {{- end }}
-  {{- $files := .Files }}
-  {{- range tuple "config1.toml" "config2.toml" "config3.toml" }}
-  {{ . }}: |-
-    {{ $files.Get . }}
-  {{- end }}
