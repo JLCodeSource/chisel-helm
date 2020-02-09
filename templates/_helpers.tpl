@@ -31,15 +31,42 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{/* Generate configmap labels */}}
+{{- define "chisel-helm.labels_configmap" }}
+labels:
+  generator: helm
+  date: {{ now | htmlDate }}
+  chart: {{ .Chart.Name }}
+  version: {{ .Chart.Version }}
+{{- end }}
+
 {{/*
 Common labels
 */}}
 {{- define "chisel-helm.labels" -}}
+helm.sh/chart: {{ include "chisel-helm.chart" . }}
+{{ include "chisel-helm.selectorLabels" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-generator: helm
-date: {{ now | htmlDate }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Selector labels
+*/}}
+{{- define "chisel-helm.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "chisel-helm.name" . }}
+{{- end -}}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "chisel-helm.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create -}}
+    {{ default (include "chisel-helm.fullname" .) .Values.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.serviceAccount.name }}
+{{- end -}}
 {{- end -}}

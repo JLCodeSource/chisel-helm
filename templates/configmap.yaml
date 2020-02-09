@@ -3,8 +3,13 @@ kind: ConfigMap
 metadata:
   name: {{ .Release.Name }}-chisel-configmap
   labels:
-  {{- template "chisel-helm.labels" }}
+{{ include "chisel-helm.labels" . | indent 4 }}
 data:
   {{- range $key, $val := .Values.chisel }}
   {{ $key }}: {{ $val | quote }}
+  {{- end }}
+  {{- $files := .Files }}
+  {{- range tuple "config1.toml" "config2.toml" "config3.toml" }}
+  {{ . }}: |-
+    {{ $files.Get . }}
   {{- end }}
