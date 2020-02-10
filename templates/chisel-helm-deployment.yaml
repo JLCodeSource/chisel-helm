@@ -21,8 +21,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}  
           ports:
-          - containerPort: {{ .Values.service.internalPort }}
-            protocol: {{ .Values.service.protocol }}
+          {{ range .Values.service.ports }}
+          - containerPort: {{ .internalPort }}
+            protocol: {{ .protocol | quote }}
+          {{- end }}
           env:
           - name: TYPE
             valueFrom:
@@ -44,15 +46,20 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-chisel-configmap
                 key: socks
-          command: ["/app/chisel", "$(TYPE)", "-v", "-p", "$(PORT)", "--proxy", "$(PROXY)", "$(SOCKS)"]
+          - name: REVERSE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-chisel-configmap
+                key: reverse
+          command: ["/app/chisel", "$(TYPE)", "-v", "-p", "$(PORT)", "--proxy", "$(PROXY)", "$(SOCKS)", "$(REVERSE)"]
           readinessProbe:
             tcpSocket:
-              port: {{ .Values.service.internalPort }}
+              port: {{ .Values.chisel.port }}
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
-              port: {{ .Values.service.internalPort }}
+              port: {{ .Values.chisel.port }}
             initialDelaySeconds: 15
             periodSeconds: 20          
           resources:

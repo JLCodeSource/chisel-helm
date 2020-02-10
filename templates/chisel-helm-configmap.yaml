@@ -11,5 +11,6 @@ data:
   proxy: {{ .proxy | quote}}
   socks: {{ .socks | quote }}
   path: {{ .path | quote}}
+  reverse: {{ .reverse | quote }}
   {{- end }}
   servicename: {{ include "chisel-helm.servicename" . | quote }}

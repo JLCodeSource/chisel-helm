@@ -6,11 +6,14 @@ metadata:
 {{ include "chisel-helm.labels" . | indent 4 }}
 spec:
   type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.externalPort }}
-      targetPort: {{ .Values.service.internalPort }}
-      protocol: {{.Values.service.protocol }}
-      name: {{ .Values.service.name }}
   selector:
     app.kubernetes.io/name: {{ include "chisel-helm.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
+  ports:
+{{ range .Values.service.ports }}
+  - name: {{ .name | quote }}
+    port: {{ .internalPort }}
+    targetPort: {{ .externalPort }}
+    protocol: {{ .protocol | quote }}
+{{- end }}
+  
