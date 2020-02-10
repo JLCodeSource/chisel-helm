@@ -51,7 +51,12 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-chisel-configmap
                 key: reverse
-          command: ["/app/chisel", "$(TYPE)", "-v", "-p", "$(PORT)", "--proxy", "$(PROXY)", "$(SOCKS)", "$(REVERSE)"]
+          - name: UPSTREAM
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-chisel-configmap
+                key: upstream
+          command: ["/app/chisel", "$(TYPE)", "-v", "-p", "$(PORT)", "--proxy", "$(PROXY)", "$(SOCKS)", "$(REVERSE)", "$(UPSTREAM)"]
           readinessProbe:
             tcpSocket:
               port: {{ .Values.chisel.port }}

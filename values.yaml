@@ -16,7 +16,9 @@ chisel:
   path: "/tunnel"
 # reverse is whether to enable the reverse tunnel
   reverse: "--reverse"
-
+# upstream is whether to enable the upstream
+  upstream: "--upstream-proxy"
+  
 # replicaCount is the number of necessary replicas
 replicaCount: 1
 
