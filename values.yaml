@@ -45,7 +45,7 @@ ingress:
   enabled: true
   annotations: 
     kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
   tls: 
   - hosts:
     - remote-rabbit.tf-support.com
@@ -55,7 +55,7 @@ ingress:
       paths: 
       - path: /tunnel
         backend:
-          serviceName: chisel-helm-chisel
+          serviceName: chisel-chisel-helm
           servicePort: 8080
       - path: /*
         backend:
