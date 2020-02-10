@@ -18,9 +18,10 @@ chisel:
   reverse: "--reverse"
 # upstream is whether to enable the upstream - default = no
   upstream: ""
+# tls is for local chisel tls settings
+  tlsHostname: remote-rabbit.tf-support.com
+  tlsSecretName: remote-rabbit-tf-support-tls
 
-
-  
 # replicaCount is the number of necessary replicas
 replicaCount: 2
 
@@ -29,7 +30,7 @@ image:
 # default repo
   repository: AWS_ACC_NUM.dkr.ecr.us-west-2.amazonaws.com/tf-test-chisel
 # default version
-  tag: 1.3.3-meteorite
+  tag: 1.3.4-username
 # default pullpolicy
   pullPolicy: IfNotPresent
 
@@ -57,7 +58,7 @@ ingress:
   enabled: true
   annotations: 
     kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    cert-manager.io/cluster-issuer: "ca-issuer"
   tls: 
   - hosts:
     - remote-rabbit.tf-support.com
@@ -73,6 +74,8 @@ ingress:
         backend:
           serviceName: default-http-backend
           servicePort: 80
+
+
 
 # not used currently
 resources: {}

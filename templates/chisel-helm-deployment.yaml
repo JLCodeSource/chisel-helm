@@ -56,6 +56,11 @@ spec:
               configMapKeyRef:
                 name: {{ .Release.Name }}-chisel-configmap
                 key: upstream
+          - name: HOST
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Release.Name }}-chisel-configmap
+                key: tlsHostname
           command: ["/app/chisel", "$(TYPE)", "-v", "-p", "$(PORT)", "--proxy", "$(PROXY)", "$(SOCKS)", "$(REVERSE)", "$(UPSTREAM)"]
           readinessProbe:
             tcpSocket:
