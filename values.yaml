@@ -16,7 +16,7 @@ chisel:
   path: "/tunnel"
 
 # replicaCount is the number of necessary replicas
-replicaCount: 3
+replicaCount: 1
 
 # image sets out the default image
 image:
