@@ -12,5 +12,6 @@ data:
   socks: {{ .socks | quote }}
   path: {{ .path | quote}}
   reverse: {{ .reverse | quote }}
+  upstream: {{ .upstream | quote }}
   {{- end }}
   servicename: {{ include "chisel-helm.servicename" . | quote }}
