@@ -21,9 +21,9 @@ replicaCount: 1
 # image sets out the default image
 image:
 # default repo
-  repository: jpillora/chisel
+  repository: AWS_ACC_NUM.dkr.ecr.us-west-2.amazonaws.com/tf-test-chisel
 # default version
-  tag: 1.3
+  tag: 1.3.2-1MB-buffer
 # default pullpolicy
   pullPolicy: IfNotPresent
 
