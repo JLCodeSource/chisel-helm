@@ -17,64 +17,70 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       containers:
-        - name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}  
-          ports:
-          {{ range .Values.service.ports }}
-          - containerPort: {{ .internalPort }}
-            protocol: {{ .protocol | quote }}
-          {{- end }}
-          env:
-          - name: TYPE
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-chisel-configmap
-                key: type
-          - name: PORT
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-chisel-configmap
-                key: port
-          - name: PROXY
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-chisel-configmap
-                key: proxy
-          - name: SOCKS
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-chisel-configmap
-                key: socks
-          - name: REVERSE
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-chisel-configmap
-                key: reverse
-          - name: UPSTREAM
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-chisel-configmap
-                key: upstream
-          - name: HOST
-            valueFrom:
-              configMapKeyRef:
-                name: {{ .Release.Name }}-chisel-configmap
-                key: tlsHostname
-          command: ["/app/chisel", "$(TYPE)", "-v", "-p", "$(PORT)", "--proxy", "$(PROXY)", "$(SOCKS)", "$(REVERSE)", "$(UPSTREAM)"]
-          readinessProbe:
-            tcpSocket:
-              port: {{ .Values.chisel.port }}
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            tcpSocket:
-              port: {{ .Values.chisel.port }}
-            initialDelaySeconds: 15
-            periodSeconds: 20          
-          resources:
-          {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}  
+        volumeMounts:
+        - name: tls
+          mountPath: "/opt"
+          readOnly: true       
+        ports:
+        {{ range .Values.service.ports }}
+        - containerPort: {{ .internalPort }}
+          protocol: {{ .protocol | quote }}
+        {{- end }}
+        env:
+        - name: TYPE
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-chisel-configmap
+              key: type
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-chisel-configmap
+              key: port
+        - name: PROXY
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-chisel-configmap
+              key: proxy
+        - name: SOCKS
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-chisel-configmap
+              key: socks
+        - name: REVERSE
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-chisel-configmap
+              key: reverse
+        - name: UPSTREAM
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Release.Name }}-chisel-configmap
+              key: upstream
+        command: ["/app/chisel", "$(TYPE)", "-v", "-p", "$(PORT)", "--proxy", "$(PROXY)", "$(SOCKS)", "$(REVERSE)", "$(UPSTREAM)"]
+        readinessProbe:
+          tcpSocket:
+            port: {{ .Values.chisel.port }}
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.chisel.port }}
+          initialDelaySeconds: 15
+          periodSeconds: 20          
+        resources:
+        {{- toYaml .Values.resources | nindent 12 }}
+        {{- if .Values.chisel.tls.enabled }}
+      volumes:
+      - name: tls
+        secret:
+          secretName: {{ .Values.chisel.tls.secretName }}
+          defaultMode: 256
+      {{- end }}
+      {{- with .Values.nodeSelector }}   
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}

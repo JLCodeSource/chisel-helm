@@ -19,8 +19,9 @@ chisel:
 # upstream is whether to enable the upstream - default = no
   upstream: ""
 # tls is for local chisel tls settings
-  tlsHostname: remote-rabbit.tf-support.com
-  tlsSecretName: remote-rabbit-tf-support-tls
+  tls: 
+    enabled: true
+    secretName: remote-rabbit-tf-support-tls
 
 # replicaCount is the number of necessary replicas
 replicaCount: 2
@@ -58,11 +59,11 @@ ingress:
   enabled: true
   annotations: 
     kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: "ca-issuer"
-  tls: 
-  - hosts:
-    - remote-rabbit.tf-support.com
-    secretName: remote-rabbit-tf-support-tls
+  #   cert-manager.io/cluster-issuer: "ca-issuer"
+  # tls: 
+  # - hosts:
+  #   - remote-rabbit.tf-support.com
+  #   secretName: remote-rabbit-tf-support-tls
   hosts:
     - host: remote-rabbit.tf-support.com
       paths: 

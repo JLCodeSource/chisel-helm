@@ -13,7 +13,5 @@ data:
   path: {{ .path | quote}}
   reverse: {{ .reverse | quote }}
   upstream: {{ .upstream | quote }}
-  tlsHostname: {{ .tlsHostname | quote }}
-  tlsSecretName: {{ .tlsSecretName }}
   {{- end }}
   servicename: {{ include "chisel-helm.servicename" . | quote }}
