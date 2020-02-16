@@ -60,7 +60,40 @@ spec:
             configMapKeyRef:
               name: {{ .Release.Name }}-chisel-configmap
               key: upstream
-        command: ["/app/chisel", "$(TYPE)", "-v", "-p", "$(PORT)", "--proxy", "$(PROXY)", "$(SOCKS)", "$(REVERSE)", "$(UPSTREAM)"]
+        {{- if .Values.chisel.tls.enabled }}
+        - name: TLS-CERT-FLAG
+          value: "--tls-cert-file"
+        - name: TLS-CERT-FILE
+          value: "/opt/tls.crt"
+        - name: TLS-KEY-FLAG
+          value: "--tls-key-file"
+        - name: TLS-KEY-FILE
+          value: "/opt/tls.key"
+        {{- else  }}
+        - name: TLS-CERT-FLAG
+          value: ""
+        - name: TLS-CERT-FILE
+          value: ""
+        - name: TLS-KEY-FLAG
+          value: ""
+        - name: TLS-KEY-FILE
+          value: ""
+        {{- end }}
+        command: ["/app/chisel"]
+        args:
+         - "$(TYPE)"
+         - "-v"
+         - "-p"
+         - "$(PORT)"
+         - "--proxy"
+         - "$(PROXY)"
+         - "$(SOCKS)"
+         - "$(REVERSE)"
+         - "$(UPSTREAM)"
+         - "$(TLS-CERT-FLAG)"
+         - "$(TLS-CERT-FILE)"
+         - "$(TLS-KEY-FLAG)"
+         - "$(TLS-KEY-FILE)"
         readinessProbe:
           tcpSocket:
             port: {{ .Values.chisel.port }}
