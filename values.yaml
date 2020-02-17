@@ -9,7 +9,7 @@ chisel:
 # port is the internal listening port - must match the service port
   port: 34443
 # proxy is the hidden target for when a non-chisel request is received
-  proxy: "https://remote-rabbit.tf-support.com"
+  proxy: ""
 # socks is necessary to decide if there is a need for a socks5 server
   socks: "--socks5"
 # path is the path for the waiting tunnel
@@ -21,7 +21,7 @@ chisel:
 # tls is for local chisel tls settings
   tls: 
     enabled: true
-    secretName: remote-rabbit-tf-support-tls
+    secretName: remote-support-tf-support-tls
 
 # replicaCount is the number of necessary replicas
 replicaCount: 2
@@ -68,21 +68,22 @@ ingress:
   enabled: true
   annotations: 
     kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: "ca-issuer"
+    cert-manager.io/cluster-issuer: "letsencrypt-production"
+    #nginx.ingress.kubernetes.io/rewrite-target: /
   tls: 
   - hosts:
-    - remote-rabbit.tf-support.com
-    secretName: remote-rabbit-tf-support-tls
+    - remote-support.tf-support.com
+    secretName: remote-support-tf-support-tls
   hosts:
-    - host: remote-rabbit.tf-support.com
+    - host: remote-support.tf-support.com
       paths: 
       - path: /tunnel
         backend:
           serviceName: chisel-chisel-helm
           servicePort: 8080
-      - path: /*
+      - path: /
         backend:
-          serviceName: default-http-backend
+          serviceName: chisel-remote-support-web
           servicePort: 80
 
 

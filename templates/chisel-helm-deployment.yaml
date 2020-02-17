@@ -85,8 +85,6 @@ spec:
          - "-v"
          - "-p"
          - "$(PORT)"
-         - "--proxy"
-         - "$(PROXY)"
          - "$(SOCKS)"
          - "$(REVERSE)"
          - "$(UPSTREAM)"
