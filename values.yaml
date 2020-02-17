@@ -54,6 +54,15 @@ service:
     internalPort: 8443
     externalPort: 8443
     protocol: TCP
+  - name: socks
+    internalPort: 1080
+    externalPort: 1080
+  - name: bastion
+    internalPort: 48300
+    externalPort: 48300
+  - name: sshportal
+    internalPort: 2222
+    externalPort: 2222
 
 ingress:
   enabled: true
