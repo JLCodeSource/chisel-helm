@@ -31,7 +31,7 @@ image:
 # default repo
   repository: AWS_ACC_NUM.dkr.ecr.us-west-2.amazonaws.com/tf-test-chisel
 # default version
-  tag: 1.3.4-username
+  tag: 1.3.4-JLCodeSource
 # default pullpolicy
   pullPolicy: IfNotPresent
 
@@ -76,6 +76,26 @@ ingress:
     secretName: remote-support-tf-support-tls
   hosts:
     - host: remote-support.tf-support.com
+      paths: 
+      - path: /tunnel
+        backend:
+          serviceName: chisel-chisel-helm
+          servicePort: 8080
+      - path: /
+        backend:
+          serviceName: chisel-remote-support-web
+          servicePort: 80
+    - host: support.tf-support.com
+      paths: 
+      - path: /tunnel
+        backend:
+          serviceName: chisel-chisel-helm
+          servicePort: 8080
+      - path: /
+        backend:
+          serviceName: chisel-remote-support-web
+          servicePort: 80
+    - host: remote-access.tf-support.com
       paths: 
       - path: /tunnel
         backend:
